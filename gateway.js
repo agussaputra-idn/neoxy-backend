@@ -164,6 +164,4 @@ app.get('/sustainability', (req, res) => {
     ecoMode: true
   });
 });
-app.listen(PORT, () => {
-  console.log(`\n🌐 NEOXY HUB ACTIVE ON PORT ${PORT}`);
-});
+module.exports = app;
