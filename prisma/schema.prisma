@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./neoxy.db"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String?
+  totalEcoPoints  Int      @default(0)
+  createdAt       DateTime @default(now())
+  devices         Device[]
+  // --- NEW UPGRADE: Relasi ke tabel Room ---
+  rooms           Room[]   
+}
+
+// --- NEW UPGRADE: Model Room untuk skala Hotel/Gedung ---
+model Room {
+  id          String   @id @default(uuid())
+  roomNumber  String   @unique
+  floor       Int
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devices     Device[] // Satu kamar bisa punya banyak alat (AC, TV, Charger)
+  createdAt   DateTime @default(now())
+}
+
+model Device {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceName       String
+  deviceType       String   
+  operatingSystem  String   
+  isIotEnabled     Boolean  @default(false)
+  battery          Int      @default(0)
+  status           String   @default("Unplugged")
+  icon             String   @default("💻")
+  
+  // --- NEW UPGRADE: Relasi ke Room (Dibuat opsional agar alat pribadi tetap jalan) ---
+  roomId           String?  
+  room             Room?    @relation(fields: [roomId], references: [id])
+  
+  iotConfig        IotConfig?
+  logs             SustainabilityLog[]
+}
+
+model IotConfig {
+  id               String   @id @default(uuid())
+  deviceId         String   @unique
+  device           Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  platform         String   
+  apiKey           String
+  deviceToken      String
+  status           Boolean  @default(true)
+}
+
+model SustainabilityLog {
+  id               String   @id @default(uuid())
+  deviceId         String
+  device           Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  actionType       String   
+  energySavedWh    Float    
+  carbonSaved      Float    
+  timestamp        DateTime @default(now())
+}

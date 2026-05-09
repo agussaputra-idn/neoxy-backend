@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Neoxy Web Agent</title>
+    <style>body { background: #020617; color: #10b981; font-family: sans-serif; text-align: center; padding: 50px; }</style>
+</head>
+<body>
+    <h1>NEOXY WEB AGENT</h1>
+    <p id="status">Connecting to Gateway...</p>
+    <h2 id="battery">--%</h2>
+    <script>
+        async function report() {
+            try {
+                // Browser API untuk baca baterai (Tidak butuh install apapun!)
+                const battery = await navigator.getBattery();
+                const level = Math.round(battery.level * 100);
+                const isCharging = battery.charging;
+
+                document.getElementById('battery').innerText = level + "% " + (isCharging ? "⚡" : "🔋");
+
+                // Kirim data ke MacBook Gateway
+                await fetch('http://192.168.1.xxx:3001/report', { // GANTI DENGAN IP MACBOOK
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: 'work-laptop-web',
+                        name: 'Laptop Kantor (Web)',
+                        type: 'laptop',
+                        battery: level,
+                        status: isCharging ? 'Charging' : 'Unplugged',
+                        icon: '🏢'
+                    })
+                });
+                document.getElementById('status').innerText = "✅ Reporting to Hub...";
+            } catch (e) {
+                document.getElementById('status').innerText = "❌ Hub Not Found";
+            }
+        }
+        setInterval(report, 10000); // Lapor tiap 10 detik
+        report();
+    </script>
+</body>
+</html>
