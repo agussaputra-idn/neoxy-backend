@@ -15,7 +15,7 @@ app.use(express.json());
 const tuya = new TuyaContext({
   baseUrl: 'https://openapi-sg.iotbing.com', // URL Data Center Singapore/US
   accessKey: 'ffp8qdrudr9ppq4yt5gm', // 👈 GANTI INI DENGAN ACCESS ID BOS
-  secretKey: 'xxxxxxxx', // 👈 GANTI INI DENGAN ACCESS SECRET BOS
+  secretKey: 'cfd04df55e924f83a082b86bef90c4b0', // 👈 GANTI INI DENGAN ACCESS SECRET BOS
 });
 
 let defaultUserId = null;
