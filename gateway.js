@@ -165,3 +165,4 @@ app.get('/sustainability', (req, res) => {
   });
 });
 module.exports = app;
+// Pancingan untuk Vercel
